@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            display: inline-block;
+            padding: 5px 10px;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Shopping Page</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Replace the following rows with data from your server -->
+                <tr id="product1">
+                    <td>Product 1</td>
+                    <td>0</td>
+                    <td>Rs. 20.00</td>
+                    <td>
+                        <button class="btn" onclick="decreaseQuantity('product1')">-</button>
+                        <button class="btn" onclick="increaseQuantity('product1')">+</button>
+                    </td>
+                </tr>
+                <tr id="product2">
+                    <td>Product 2</td>
+                    <td>0</td>
+                    <td>Rs. 15.00</td>
+                    <td>
+                        <button class="btn" onclick="decreaseQuantity('product2')">-</button>
+                        <button class="btn" onclick="increaseQuantity('product2')">+</button>
+                    </td>
+                </tr>
+                <!-- End of sample data -->
+            </tbody>
+        </table>
+        <div style="text-align: center;">
+            <button class="btn" onclick="submitCart()">ADD TO CART</button>
+        </div>
+    </div>
+
+    <script>
+        function increaseQuantity(productId) {
+            const quantityElement = document.getElementById(productId).getElementsByTagName('td')[1];
+            quantityElement.textContent = parseInt(quantityElement.textContent) + 1;
+        }
+
+        function decreaseQuantity(productId) {
+            const quantityElement = document.getElementById(productId).getElementsByTagName('td')[1];
+            const quantity = parseInt(quantityElement.textContent);
+            if (quantity > 0) {
+                quantityElement.textContent = quantity - 1;
+            }
+        }
+
+        function submitCart() {
+            const cartItems = [];
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const productName = row.getElementsByTagName('td')[0].textContent;
+                const quantity = parseInt(row.getElementsByTagName('td')[1].textContent);
+                const price = parseFloat(row.getElementsByTagName('td')[2].textContent.split(' ')[1]); // Extracting price from "Rs. XX.XX"
+                cartItems.push({
+                    productName: productName,
+                    quantity: quantity,
+                    price: price
+                });
+            });
+
+            // Create a form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/shopping';
+
+            // Create an input field for each cart item
+            cartItems.forEach(item => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'cartItem';
+                input.value = JSON.stringify(item);
+                form.appendChild(input);
+            });
+
+            // Append the form to the body and submit it
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+</html>
